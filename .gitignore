@@ -1,1 +1,3 @@
-source_files/*
+source_files/*.csv
+
+!source_files/.gitkeep
