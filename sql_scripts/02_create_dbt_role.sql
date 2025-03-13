@@ -8,6 +8,9 @@ GRANT CONNECT ON DATABASE video_comments_wh TO dbt_user;
 
 \connect video_comments_wh
 
+-- OWNER PRIVILEDGES ON dbt_schema
+ALTER SCHEMA dbt_schema OWNER TO dbt_user;
+
 -- READ ACCESS PERMISSIONS TO BRONZE SCHEMA
 GRANT USAGE ON SCHEMA bronze TO dbt_user;
 GRANT SELECT ON ALL TABLES IN SCHEMA bronze TO dbt_user;

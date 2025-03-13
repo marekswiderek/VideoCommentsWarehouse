@@ -16,6 +16,7 @@ CREATE DATABASE video_comments_wh
 
 \connect video_comments_wh
 
+CREATE SCHEMA IF NOT EXISTS dbt_schema;
 CREATE SCHEMA IF NOT EXISTS bronze;
 CREATE SCHEMA IF NOT EXISTS silver;
 CREATE SCHEMA IF NOT EXISTS gold;
