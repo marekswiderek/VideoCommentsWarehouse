@@ -1,12 +1,22 @@
--- CREATE dbt_user ROLE and give it required permissions
-DROP USER dbt_user;
+-- DROP dbt_schema and dbt_user if exists
+DROP SCHEMA IF EXISTS dbt_schema CASCADE;
 
+DO
+$$BEGIN
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='dbt_user') THEN
+        REVOKE CONNECT ON DATABASE video_comments_wh FROM dbt_user;
+    END IF;
+END$$;
+
+DROP USER IF EXISTS dbt_user;
+
+-- CREATE dbt_user ROLE and give it required permissions
 CREATE USER dbt_user
     WITH PASSWORD 'password';
 
 GRANT CONNECT ON DATABASE video_comments_wh TO dbt_user;
 
-\connect video_comments_wh
+CREATE SCHEMA dbt_schema;
 
 -- OWNER PRIVILEDGES ON dbt_schema
 ALTER SCHEMA dbt_schema OWNER TO dbt_user;

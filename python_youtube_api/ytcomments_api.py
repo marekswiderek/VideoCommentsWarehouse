@@ -68,7 +68,6 @@ def prepare_video_comments_data(comments_list, comment_threads_response):
     return comments_list
 
 def extract_video_to_csv(video_id):
-    #video_id = Variable.get("video_id")
     print(">> Extracting video data for VIDEO_ID: "+video_id)
     youtube_api = setup_youtube_api()
 
@@ -94,7 +93,6 @@ def extract_video_to_csv(video_id):
     
 
 def extract_video_comments_to_csv(video_id):
-    #video_id = Variable.get("video_id")
     print(">> Extracting comments data for VIDEO_ID: "+video_id)
     youtube_api = setup_youtube_api()
 
@@ -127,12 +125,14 @@ def extract_video_comments_to_csv(video_id):
     else:
         print(f">> Created {csv_file_name}.csv file")
 
-def prepare_video_and_comments_data(video_id):
+def prepare_video_and_comments_data():
+    print(f"Current wd: {os.getcwd()}")
+    video_id = Variable.get("video_id")
     extract_video_comments_to_csv(video_id)
     extract_video_to_csv(video_id)
 
 def main():
-    prepare_video_and_comments_data("q8q3OFFfY6c")
+    pass
     
 if __name__ == "__main__":
     main()
