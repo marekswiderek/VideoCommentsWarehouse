@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS bronze.videos;
 DROP TABLE IF EXISTS bronze.comments;
+DROP TABLE IF EXISTS bronze.videos;
 
 CREATE TABLE bronze.videos(
     video_id CHARACTER VARYING(11) PRIMARY KEY,

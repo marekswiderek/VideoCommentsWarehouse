@@ -130,6 +130,7 @@ def prepare_video_and_comments_data():
     video_id = Variable.get("video_id")
     extract_video_comments_to_csv(video_id)
     extract_video_to_csv(video_id)
+    return os.getcwd()+"/source_files/"
 
 def main():
     pass
