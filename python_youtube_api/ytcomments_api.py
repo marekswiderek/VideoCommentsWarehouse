@@ -1,9 +1,10 @@
 import os
 import googleapiclient.discovery
-from airflow.models import Variable
 import pandas as pd
 import numpy as np
 import traceback
+import glob
+from airflow.models import Variable
 
 def setup_youtube_api():
     # Disable OAuthlib's HTTPS verification when running locally.
@@ -25,7 +26,6 @@ def get_video(youtube_api, video_id):
         id=video_id,
     )
     response = request.execute()
-    #print(response["items"][0])
 
     return response
 
@@ -126,10 +126,24 @@ def extract_video_comments_to_csv(video_id):
         print(f">> Created {csv_file_name}.csv file")
 
 def prepare_video_and_comments_data():
-    print(f"Current wd: {os.getcwd()}")
-    video_id = Variable.get("video_id")
-    extract_video_comments_to_csv(video_id)
-    extract_video_to_csv(video_id)
+    # Create srouce_files directory if not exists
+    if not os.path.exists("source_files"):
+        os.makedirs("source_files")
+
+    # Remove CSV files from previous run
+    files = glob.glob(os.getcwd()+"/source_files/*.csv")
+    for f in files:
+        os.remove(f)
+
+    # Get a list of video id's to fetch data
+    video_ids_string = Variable.get("video_ids")
+    video_ids = [x.strip() for x in video_ids_string.split(",")] if video_ids_string else []
+
+    for video_id in video_ids:
+        extract_video_comments_to_csv(video_id)
+        extract_video_to_csv(video_id)
+
+    # Return absolute path for XCom Airflow - load bronze layer    
     return os.getcwd()+"/source_files/"
 
 def main():
