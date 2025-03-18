@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: video_comments_wh
+    schema: bronze
+    tables:
+      - name: videos
+        columns:
+          - name: video_id
+            tests:
+              - unique
+              - not_null
+      - name: comments
+        columns:
+          - name: comment_id
+            tests:
+              - unique
+              - not_null
+          - name: video_id
+            tests:
+              - not_null
+              - relationships:
+                  to: source('bronze', 'videos')
+                  field: video_id

@@ -32,5 +32,12 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   dbt_files:
     # Config indicated by + and applies to all files under models/example/
-    example:
+    silver:
+      +materialized: table
+      +database: video_comments_wh
+      +schema: silver
+      +full_refresh: true
+    gold:
       +materialized: view
+      +database: video_comments_wh
+      +schema: gold
