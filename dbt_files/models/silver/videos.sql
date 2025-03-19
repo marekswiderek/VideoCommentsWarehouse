@@ -6,6 +6,6 @@ SELECT
     view_count,
     like_count,
     comment_count,
-    now()::timestamp(0) as created_at
+    now()::timestamp(0) as created_at -- ADD CREATED_AT COLUMN
 FROM 
     {{ source('bronze', 'videos') }}
