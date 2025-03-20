@@ -17,6 +17,9 @@ sources:
             tests:
               - unique
               - not_null
+          - name: comment_author
+            tests:
+              - not_null
           - name: video_id
             tests:
               - not_null
