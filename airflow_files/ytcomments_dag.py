@@ -1,6 +1,7 @@
 from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.utils.dates import days_ago
 from datetime import datetime
@@ -29,10 +30,20 @@ generate_source_files = PythonOperator(
     dag = dag
 )
 
+wh_drop_database = SQLExecuteQueryOperator(
+    task_id = "wh_drop_database",
+    conn_id = "postgresql_conn_postgres_db",
+    sql = "DROP DATABASE IF EXISTS video_comments_wh;",
+    split_statements = True,
+    autocommit = True
+)
+
 wh_create_database = SQLExecuteQueryOperator(
     task_id = "wh_create_database",
     conn_id = "postgresql_conn_postgres_db",
-    sql = ["sql_scripts/01_initialize_db.sql"]
+    sql = "CREATE DATABASE video_comments_wh WITH OWNER = postgres ENCODING = 'UTF8' TABLESPACE = pg_default CONNECTION LIMIT = -1;",
+    split_statements = True,
+    autocommit = True
 )
 
 wh_init_schemas = SQLExecuteQueryOperator(
@@ -59,4 +70,20 @@ wh_create_dbt_role = SQLExecuteQueryOperator(
     sql = ["sql_scripts/05_create_dbt_role.sql"]
 )
 
-generate_source_files >> wh_create_database >> wh_init_schemas >> wh_create_bronze_layer_tables >> wh_load_bronze_layer_data >> wh_create_dbt_role
+dbt_source_tests = BashOperator(
+    task_id = "dbt_source_tests",
+    bash_command = 'dbt test --project-dir ${AIRFLOW_HOME}/ytcomments_dags/dbt_files/ --select "source:*"'
+)
+
+dbt_singular_tests = BashOperator(
+    task_id = "dbt_singular_tests",
+    bash_command = 'dbt test --project-dir ${AIRFLOW_HOME}/ytcomments_dags/dbt_files/ --select "test_type:singular"',
+    trigger_rule = "all_done"
+)
+
+dbt_run = BashOperator(
+    task_id = "dbt_run",
+    bash_command = 'dbt run --project-dir ${AIRFLOW_HOME}/ytcomments_dags/dbt_files/'
+)
+
+generate_source_files >> [wh_drop_database, wh_create_database] >> wh_init_schemas >> wh_create_bronze_layer_tables >> wh_load_bronze_layer_data >> wh_create_dbt_role >> [dbt_source_tests, dbt_run] >> dbt_singular_tests
