@@ -33,8 +33,10 @@ There should be two tables intended for data cleansing and enrichment called:
 	- [entity]: Descriptive name of the table/view, aligned with the business domain(e.g. comments, video)
 
 ## Architecture
-### Bronze Layer Data Schema
+Data Warehouse uses Medallion Architecture(Bronze, Silver, Gold layers). 
+### Bronze Layer Data Logical Diagram
 ![Image](https://github.com/user-attachments/assets/ebef3aba-7e26-4c59-82a7-42ced4c7635d)
-### Silver Layer Data Schema
+### Silver Layer Data Logical Diagram
 ![Image](https://github.com/user-attachments/assets/ebef3aba-7e26-4c59-82a7-42ced4c7635d)
-### Gold Layer Data Schema
+### Gold Layer Data Logical Diagram
+![Image](https://github.com/user-attachments/assets/c779caf3-da54-4862-98d0-6ff4a305f442)
